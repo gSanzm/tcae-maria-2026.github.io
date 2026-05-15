@@ -33,6 +33,7 @@
   <button onclick="irInicio()">← Volver</button>
   <h2 id="nombre-asignatura"></h2>
   <button onclick="generarTest()">Generar test (50 preguntas)</button>
+  <button onclick="generarTestCompleto()">Generar examen completo</button>
   <button onclick="verFalladas()">Preguntas falladas (<span id="num-falladas">0</span>)</button>
 </div>
 
@@ -169,14 +170,26 @@ function seleccionarAsignatura(idx) {
 }
 
 // TEST
-function generarTest() {
+function generarTest(numPreguntas = 50) {
   const todasPreguntas = getPreguntasAsignatura(asignaturaActual);
-  testPreguntas = shuffle(todasPreguntas).slice(0, Math.min(50, todasPreguntas.length));
+  const cantidad = Math.min(numPreguntas, todasPreguntas.length);
+
+  testPreguntas = shuffle([...todasPreguntas]).slice(0, cantidad);
   testRespuestas = {};
   testPreguntaIdx = 0;
-  document.getElementById('test-titulo').textContent = 'Test: ' + asignaturaActual.nombre;
+
+  document.getElementById('test-titulo').textContent =
+    cantidad === todasPreguntas.length
+      ? 'Examen completo: ' + asignaturaActual.nombre
+      : 'Test: ' + asignaturaActual.nombre;
+
   mostrarVista('vista-test');
   renderPreguntaTest();
+}
+
+function generarTestCompleto() {
+  const todasPreguntas = getPreguntasAsignatura(asignaturaActual);
+  generarTest(todasPreguntas.length);
 }
 
 function renderPreguntaTest() {
